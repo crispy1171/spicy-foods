@@ -1,0 +1,110 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Tables - SpicyHunt Admin{% endblock %}
+{% block page_title %}Table Management{% endblock %}
+{% block breadcrumb %}Tables{% endblock %}
+
+{% block content %}
+<div class="page-actions">
+    <a href="{% url 'admin_table_add' %}" class="btn btn-success">
+        <i class="fas fa-plus"></i> Add New Table
+    </a>
+</div>
+
+<div class="table-management-layout">
+    <div class="card floor-plan-card">
+        <div class="card-header">
+            <h3>Restaurant Floor Plan</h3>
+            <div class="header-actions">
+                <button type="button" class="btn btn-outline" id="toggleEditMode">
+                    <i class="fas fa-edit"></i> Edit Layout
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="floor-plan-container">
+                <div class="floor-plan" id="floorPlan">
+                    {% for table in tables %}
+                    <div class="floor-table" style="top: {{ table.position_y }}px; left: {{ table.position_x }}px;"
+                        data-table-id="{{ table.id }}">
+                        <div class="floor-table-inner">
+                            <span class="table-number">{{ table.number }}</span>
+                        </div>
+                        <span class="table-capacity">{{ table.capacity }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="floor-plan-legend">
+                <div class="legend-item">
+                    <div class="legend-color available"></div>
+                    <span>Available</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color occupied"></div>
+                    <span>Occupied</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color reserved"></div>
+                    <span>Reserved</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card tables-list-card">
+        <div class="card-header">
+            <h3>All Tables</h3>
+            <div class="search-box">
+                <input type="text" id="tableSearch" placeholder="Search tables...">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Number</th>
+                        <th>Capacity</th>
+                        <th>Status</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for table in tables %}
+                    <tr>
+                        <td>Table {{ table.number }}</td>
+                        <td>{{ table.capacity }} guests</td>
+                        <td>
+                            <span class="status-badge status-{{ table.status|lower }}">
+                                {{ table.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ table.location|default:"Main Floor" }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'admin_table_edit' table.id %}" class="btn-icon" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'admin_table_delete' table.id %}" class="btn-icon text-danger"
+                                    title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="empty-table">No tables found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
